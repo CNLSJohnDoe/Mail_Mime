@@ -228,7 +228,7 @@ class mime
             }
         } else {
             $cont = $this->_file2str($data);
-            if (PEAR::isError($cont)) {
+            if (\PEAR::isError($cont)) {
                 return $cont;
             }
             if (!$append) {
@@ -269,7 +269,7 @@ class mime
             $this->_htmlbody = $data;
         } else {
             $cont = $this->_file2str($data);
-            if (PEAR::isError($cont)) {
+            if (\PEAR::isError($cont)) {
                 return $cont;
             }
             $this->_htmlbody = $cont;
@@ -319,7 +319,7 @@ class mime
                 $filedata = null;
                 $bodyfile = $file;
             } else {
-                if (PEAR::isError($filedata = $this->_file2str($file))) {
+                if (\PEAR::isError($filedata = $this->_file2str($file))) {
                     return $filedata;
                 }
             }
@@ -397,7 +397,7 @@ class mime
                 $filedata = null;
                 $bodyfile = $file;
             } else {
-                if (PEAR::isError($filedata = $this->_file2str($file))) {
+                if (\PEAR::isError($filedata = $this->_file2str($file))) {
                     return $filedata;
                 }
             }
@@ -410,7 +410,7 @@ class mime
 
         if (!strlen($filename)) {
             $msg = "The supplied filename for the attachment can't be empty";
-            $err = PEAR::raiseError($msg);
+            $err = \PEAR::raiseError($msg);
             return $err;
         }
         $filename = $this->_basename($filename);
@@ -445,15 +445,15 @@ class mime
     {
         // Check state of file and raise an error properly
         if (!file_exists($file_name)) {
-            $err = PEAR::raiseError('File not found: ' . $file_name);
+            $err = \PEAR::raiseError('File not found: ' . $file_name);
             return $err;
         }
         if (!is_file($file_name)) {
-            $err = PEAR::raiseError('Not a regular file: ' . $file_name);
+            $err = \PEAR::raiseError('Not a regular file: ' . $file_name);
             return $err;
         }
         if (!is_readable($file_name)) {
-            $err = PEAR::raiseError('File is not readable: ' . $file_name);
+            $err = \PEAR::raiseError('File is not readable: ' . $file_name);
             return $err;
         }
 
@@ -680,7 +680,7 @@ class mime
 
         $body = $this->get($params);
 
-        if (PEAR::isError($body)) {
+        if (\PEAR::isError($body)) {
             return $body;
         }
 
@@ -724,19 +724,19 @@ class mime
     {
         // Check state of file and raise an error properly
         if (file_exists($filename) && !is_writable($filename)) {
-            $err = PEAR::raiseError('File is not writable: ' . $filename);
+            $err = \PEAR::raiseError('File is not writable: ' . $filename);
             return $err;
         }
 
         if (!($fh = fopen($filename, 'ab'))) {
-            $err = PEAR::raiseError('Unable to open file: ' . $filename);
+            $err = \PEAR::raiseError('Unable to open file: ' . $filename);
             return $err;
         }
 
         // Write message headers into file (skipping Content-* headers)
         $head = $this->txtHeaders($headers, $overwrite, true);
         if (fwrite($fh, $head) === false) {
-            $err = PEAR::raiseError('Error writing to file: ' . $filename);
+            $err = \PEAR::raiseError('Error writing to file: ' . $filename);
             return $err;
         }
 
@@ -763,12 +763,12 @@ class mime
     {
         // Check state of file and raise an error properly
         if (file_exists($filename) && !is_writable($filename)) {
-            $err = PEAR::raiseError('File is not writable: ' . $filename);
+            $err = \PEAR::raiseError('File is not writable: ' . $filename);
             return $err;
         }
 
         if (!($fh = fopen($filename, 'ab'))) {
-            $err = PEAR::raiseError('Unable to open file: ' . $filename);
+            $err = \PEAR::raiseError('Unable to open file: ' . $filename);
             return $err;
         }
 
@@ -967,7 +967,7 @@ class mime
         if ($filename) {
             // Append mimePart message headers and body into file
             $headers = $message->encodeToFile($filename, $boundary, $skip_head);
-            if (PEAR::isError($headers)) {
+            if (\PEAR::isError($headers)) {
                 return $headers;
             }
             $this->_headers = array_merge($this->_headers, $headers);
@@ -975,7 +975,7 @@ class mime
             return $ret;
         } else {
             $output = $message->encode($boundary, $skip_head);
-            if (PEAR::isError($output)) {
+            if (\PEAR::isError($output)) {
                 return $output;
             }
             $this->_headers = array_merge($this->_headers, $output['headers']);

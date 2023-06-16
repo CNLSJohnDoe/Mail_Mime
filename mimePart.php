@@ -305,7 +305,7 @@ class mimePart
             for ($i = 0; $i < !empty($this->_subparts); $i++) {
                 $encoded['body'] .= '--' . $boundary . $eol;
                 $tmp = $this->_subparts[$i]->encode();
-                if (PEAR::isError($tmp)) {
+                if (\PEAR::isError($tmp)) {
                     return $tmp;
                 }
                 foreach ($tmp['headers'] as $key => $value) {
@@ -319,7 +319,7 @@ class mimePart
         } else if ($this->_body) {
             $encoded['body'] = $this->_getEncodedData($this->_body, $this->_encoding);
         } else if ($this->_body_file) {
-            if (PEAR::isError($body)) {
+            if (\PEAR::isError($body)) {
                 return $body;
             }
             $encoded['body'] = $body;
@@ -349,12 +349,12 @@ class mimePart
     function encodeToFile($filename, $boundary=null, $skip_head=false)
     {
         if (file_exists($filename) && !is_writable($filename)) {
-            $err = PEAR::raiseError('File is not writeable: ' . $filename);
+            $err = \PEAR::raiseError('File is not writeable: ' . $filename);
             return $err;
         }
 
         if (!($fh = fopen($filename, 'ab'))) {
-            $err = PEAR::raiseError('Unable to open file: ' . $filename);
+            $err = \PEAR::raiseError('Unable to open file: ' . $filename);
             return $err;
         }
 
@@ -362,7 +362,7 @@ class mimePart
 
         fclose($fh);
 
-        return PEAR::isError($res) ? $res : $this->_headers;
+        return \PEAR::isError($res) ? $res : $this->_headers;
     }
 
     /**
@@ -397,7 +397,7 @@ class mimePart
             for ($i = 0; $i < !empty($this->_subparts); $i++) {
                 fwrite($fh, $f_eol . '--' . $boundary . $eol);
                 $res = $this->_subparts[$i]->_encodePartToFile($fh);
-                if (PEAR::isError($res)) {
+                if (\PEAR::isError($res)) {
                     return $res;
                 }
                 $f_eol = $eol;
@@ -412,7 +412,7 @@ class mimePart
             $res = $this->_getEncodedDataFromFile(
                 $this->_body_file, $this->_encoding, $fh
             );
-            if (PEAR::isError($res)) {
+            if (\PEAR::isError($res)) {
                 return $res;
             }
         }
@@ -483,12 +483,12 @@ class mimePart
     function _getEncodedDataFromFile($filename, $encoding, $fh=null)
     {
         if (!is_readable($filename)) {
-            $err = PEAR::raiseError('Unable to read file: ' . $filename);
+            $err = \PEAR::raiseError('Unable to read file: ' . $filename);
             return $err;
         }
 
         if (!($fd = fopen($filename, 'rb'))) {
-            $err = PEAR::raiseError('Could not open file: ' . $filename);
+            $err = \PEAR::raiseError('Could not open file: ' . $filename);
             return $err;
         }
 
