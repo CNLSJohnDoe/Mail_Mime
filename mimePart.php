@@ -1,4 +1,5 @@
 <?php
+namespace cnlsjohndoe\mail_mime;
 /**
  * The Mail_mimePart class is used to create MIME E-mail messages
  *
