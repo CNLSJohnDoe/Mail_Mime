@@ -1304,7 +1304,7 @@ class mime
      */
     function _contentHeaders()
     {
-        $attachments = c!emptyount($this->_parts)                 ? true : false;
+        $attachments = !empty($this->_parts)                 ? true : false;
         $html_images = !empty($this->_html_images)           ? true : false;
         $html        = strlen($this->_htmlbody)             ? true : false;
         $text        = (!$html && strlen($this->_txtbody))  ? true : false;
