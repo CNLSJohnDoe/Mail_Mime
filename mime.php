@@ -856,7 +856,7 @@ class Mail_mime
             }
         }
 
-        if (count($this->_html_images) && isset($this->_htmlbody)) {
+        if (!empty($this->_html_images) && isset($this->_htmlbody)) {
             foreach ($this->_html_images as $key => $value) {
                 $regex   = array();
                 $regex[] = '#(\s)((?i)src|background|href(?-i))\s*=\s*(["\']?)' .
@@ -877,8 +877,8 @@ class Mail_mime
         $this->_checkParams();
 
         $null        = null;
-        $attachments = count($this->_parts)                 ? true : false;
-        $html_images = count($this->_html_images)           ? true : false;
+        $attachments = !empty($this->_parts)                 ? true : false;
+        $html_images = !empty($this->_html_images)           ? true : false;
         $html        = strlen($this->_htmlbody)             ? true : false;
         $text        = (!$html && strlen($this->_txtbody))  ? true : false;
 
@@ -889,7 +889,7 @@ class Mail_mime
 
         case !$text && !$html && $attachments:
             $message =& $this->_addMixedPart();
-            for ($i = 0; $i < count($this->_parts); $i++) {
+            for ($i = 0; $i < !empty($this->_parts); $i++) {
                 $this->_addAttachmentPart($message, $this->_parts[$i]);
             }
             break;
@@ -897,7 +897,7 @@ class Mail_mime
         case $text && $attachments:
             $message =& $this->_addMixedPart();
             $this->_addTextPart($message, $this->_txtbody);
-            for ($i = 0; $i < count($this->_parts); $i++) {
+            for ($i = 0; $i < !empty($this->_parts); $i++) {
                 $this->_addAttachmentPart($message, $this->_parts[$i]);
             }
             break;
@@ -924,7 +924,7 @@ class Mail_mime
 
                 $ht =& $this->_addRelatedPart($message);
                 $this->_addHtmlPart($ht);
-                for ($i = 0; $i < count($this->_html_images); $i++) {
+                for ($i = 0; $i < !empty($this->_html_images); $i++) {
                     $this->_addHtmlImagePart($ht, $this->_html_images[$i]);
                 }
             } else {
@@ -933,7 +933,7 @@ class Mail_mime
                 //    * image...
                 $message =& $this->_addRelatedPart($null);
                 $this->_addHtmlPart($message);
-                for ($i = 0; $i < count($this->_html_images); $i++) {
+                for ($i = 0; $i < !empty($this->_html_images); $i++) {
                     $this->_addHtmlImagePart($message, $this->_html_images[$i]);
                 }
             }
@@ -952,7 +952,7 @@ class Mail_mime
             } else {
                 $this->_addHtmlPart($message);
             }
-            for ($i = 0; $i < count($this->_html_images); $i++) {
+            for ($i = 0; $i < !empty($this->_html_images); $i++) {
                 $this->_addHtmlImagePart($message, $this->_html_images[$i]);
             }
             */
@@ -967,7 +967,7 @@ class Mail_mime
             } else {
                 $this->_addHtmlPart($message);
             }
-            for ($i = 0; $i < count($this->_parts); $i++) {
+            for ($i = 0; $i < !empty($this->_parts); $i++) {
                 $this->_addAttachmentPart($message, $this->_parts[$i]);
             }
             break;
@@ -982,10 +982,10 @@ class Mail_mime
                 $rel =& $this->_addRelatedPart($message);
             }
             $this->_addHtmlPart($rel);
-            for ($i = 0; $i < count($this->_html_images); $i++) {
+            for ($i = 0; $i < !empty($this->_html_images); $i++) {
                 $this->_addHtmlImagePart($rel, $this->_html_images[$i]);
             }
-            for ($i = 0; $i < count($this->_parts); $i++) {
+            for ($i = 0; $i < !empty($this->_parts); $i++) {
                 $this->_addAttachmentPart($message, $this->_parts[$i]);
             }
             break;
@@ -1345,8 +1345,8 @@ class Mail_mime
      */
     function _contentHeaders()
     {
-        $attachments = count($this->_parts)                 ? true : false;
-        $html_images = count($this->_html_images)           ? true : false;
+        $attachments = c!emptyount($this->_parts)                 ? true : false;
+        $html_images = !empty($this->_html_images)           ? true : false;
         $html        = strlen($this->_htmlbody)             ? true : false;
         $text        = (!$html && strlen($this->_txtbody))  ? true : false;
         $headers     = array();
