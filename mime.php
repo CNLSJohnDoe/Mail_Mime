@@ -1016,9 +1016,9 @@ class mime
         }
 
         if ($overwrite) {
-            $this->_headers = array_merge($this->_headers, $headers);
+            $this->_headers = array_merge((array) $this->_headers, (array) $headers);
         } else {
-            $this->_headers = array_merge($headers, $this->_headers);
+            $this->_headers = array_merge((array) $headers, (array) $this->_headers);
         }
 
         $headers = $this->_headers;
