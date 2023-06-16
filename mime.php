@@ -1,5 +1,7 @@
 <?php
 namespace cnlsjohndoe\mail_mime;
+
+require('mimePart.php');
 /**
  * The Mail_Mime class is used to create MIME E-mail messages
  *
@@ -508,7 +510,7 @@ class mime
             $ret = $obj->addSubpart($this->_htmlbody, $params);
             return $ret;
         } else {
-            $ret = new Mail_mimePart($this->_htmlbody, $params);
+            $ret = new mimePart($this->_htmlbody, $params);
             return $ret;
         }
     }
