@@ -74,7 +74,7 @@ namespace cnlsjohndoe\mail_mime;
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Mail_mime
  */
-class Mail_mimePart
+class mimePart
 {
     /**
     * The encoding type of this part
