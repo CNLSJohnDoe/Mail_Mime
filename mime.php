@@ -57,25 +57,6 @@
  *            and Sascha Schumann <sascha@schumann.cx>
  */
 
-
-/**
- * require PEAR
- *
- * This package depends on PEAR to raise errors.
- */
-
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR ."../../PEAR.php";
-
-/**
- * require Mail_mimePart
- *
- * Mail_mimePart contains the code required to
- * create all the different parts a mail can
- * consist of.
- */
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR .'mimePart.php';
-
-
 /**
  * The Mail_Mime class provides an OO interface to create MIME
  * enabled email messages. This way you can create emails that
