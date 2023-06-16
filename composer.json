@@ -2,8 +2,8 @@
     "name": "cnlsjohndoe/mail_mime",
     "autoload": {
         "psr-4": { 
-            "cnlsjohndoe\\mail_mime\\mime" : "",
-            "cnlsjohndoe\\mail_mime\\mimePart" : ""
+            "cnlsjohndoe\\mail_mime\\" : "Mail_mime",
+            "cnlsjohndoe\\mail_mime\\" : "Mail_mimePart"
         }
     }
 }
