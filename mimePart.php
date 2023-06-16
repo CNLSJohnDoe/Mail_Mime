@@ -807,7 +807,7 @@ class mimePart
 
         // Structured header (make sure addr-spec inside is not encoded)
         if (!empty($separator)) {
-            $parts = Mail_mimePart::_explodeQuotedString($separator, $value);
+            $parts = $this->_explodeQuotedString($separator, $value);
             $value = '';
 
             foreach ($parts as $part) {
