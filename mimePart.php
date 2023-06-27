@@ -1,4 +1,5 @@
 <?php
+namespace cnlsjohndoe\mail_mime;
 /**
  * The Mail_mimePart class is used to create MIME E-mail messages
  *
@@ -73,7 +74,7 @@
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Mail_mime
  */
-class Mail_mimePart
+class mimePart
 {
     /**
     * The encoding type of this part
@@ -293,7 +294,7 @@ class Mail_mimePart
     {
         $encoded =& $this->_encoded;
 
-        if (count($this->_subparts)) {
+        if (!empty($this->_subparts)) {
             $boundary = $boundary ? $boundary : '=_' . md5(rand() . microtime());
             $eol = $this->_eol;
 
@@ -301,10 +302,10 @@ class Mail_mimePart
 
             $encoded['body'] = ''; 
 
-            for ($i = 0; $i < count($this->_subparts); $i++) {
+            for ($i = 0; $i < !empty($this->_subparts); $i++) {
                 $encoded['body'] .= '--' . $boundary . $eol;
                 $tmp = $this->_subparts[$i]->encode();
-                if (PEAR::isError($tmp)) {
+                if (\PEAR::isError($tmp)) {
                     return $tmp;
                 }
                 foreach ($tmp['headers'] as $key => $value) {
@@ -318,16 +319,7 @@ class Mail_mimePart
         } else if ($this->_body) {
             $encoded['body'] = $this->_getEncodedData($this->_body, $this->_encoding);
         } else if ($this->_body_file) {
-            // Temporarily reset magic_quotes_runtime for file reads and writes
-            if ($magic_quote_setting = get_magic_quotes_runtime()) {
-                @ini_set('magic_quotes_runtime', 0);
-            }
-            $body = $this->_getEncodedDataFromFile($this->_body_file, $this->_encoding);
-            if ($magic_quote_setting) {
-                @ini_set('magic_quotes_runtime', $magic_quote_setting);
-            }
-
-            if (PEAR::isError($body)) {
+            if (\PEAR::isError($body)) {
                 return $body;
             }
             $encoded['body'] = $body;
@@ -357,29 +349,20 @@ class Mail_mimePart
     function encodeToFile($filename, $boundary=null, $skip_head=false)
     {
         if (file_exists($filename) && !is_writable($filename)) {
-            $err = PEAR::raiseError('File is not writeable: ' . $filename);
+            $err = \PEAR::raiseError('File is not writeable: ' . $filename);
             return $err;
         }
 
         if (!($fh = fopen($filename, 'ab'))) {
-            $err = PEAR::raiseError('Unable to open file: ' . $filename);
+            $err = \PEAR::raiseError('Unable to open file: ' . $filename);
             return $err;
-        }
-
-        // Temporarily reset magic_quotes_runtime for file reads and writes
-        if ($magic_quote_setting = get_magic_quotes_runtime()) {
-            @ini_set('magic_quotes_runtime', 0);
         }
 
         $res = $this->_encodePartToFile($fh, $boundary, $skip_head);
 
         fclose($fh);
 
-        if ($magic_quote_setting) {
-            @ini_set('magic_quotes_runtime', $magic_quote_setting);
-        }
-
-        return PEAR::isError($res) ? $res : $this->_headers;
+        return \PEAR::isError($res) ? $res : $this->_headers;
     }
 
     /**
@@ -396,7 +379,7 @@ class Mail_mimePart
     {
         $eol = $this->_eol;
 
-        if (count($this->_subparts)) {
+        if (!empty($this->_subparts)) {
             $boundary = $boundary ? $boundary : '=_' . md5(rand() . microtime());
             $this->_headers['Content-Type'] .= ";$eol boundary=\"$boundary\"";
         }
@@ -410,11 +393,11 @@ class Mail_mimePart
             $f_eol = '';
         }
 
-        if (count($this->_subparts)) {
-            for ($i = 0; $i < count($this->_subparts); $i++) {
+        if (!empty($this->_subparts)) {
+            for ($i = 0; $i < !empty($this->_subparts); $i++) {
                 fwrite($fh, $f_eol . '--' . $boundary . $eol);
                 $res = $this->_subparts[$i]->_encodePartToFile($fh);
-                if (PEAR::isError($res)) {
+                if (\PEAR::isError($res)) {
                     return $res;
                 }
                 $f_eol = $eol;
@@ -429,7 +412,7 @@ class Mail_mimePart
             $res = $this->_getEncodedDataFromFile(
                 $this->_body_file, $this->_encoding, $fh
             );
-            if (PEAR::isError($res)) {
+            if (\PEAR::isError($res)) {
                 return $res;
             }
         }
@@ -454,7 +437,7 @@ class Mail_mimePart
     function &addSubpart($body, $params)
     {
         $this->_subparts[] = new Mail_mimePart($body, $params);
-        return $this->_subparts[count($this->_subparts) - 1];
+        return $this->_subparts[!empty($this->_subparts) - 1];
     }
 
     /**
@@ -500,12 +483,12 @@ class Mail_mimePart
     function _getEncodedDataFromFile($filename, $encoding, $fh=null)
     {
         if (!is_readable($filename)) {
-            $err = PEAR::raiseError('Unable to read file: ' . $filename);
+            $err = \PEAR::raiseError('Unable to read file: ' . $filename);
             return $err;
         }
 
         if (!($fd = fopen($filename, 'rb'))) {
-            $err = PEAR::raiseError('Could not open file: ' . $filename);
+            $err = \PEAR::raiseError('Could not open file: ' . $filename);
             return $err;
         }
 
@@ -592,7 +575,7 @@ class Mail_mimePart
         $escape = '=';
         $output = '';
 
-        while (list($idx, $line) = each($lines)) {
+        foreach($lines as $idx => $line) {
             $newline = '';
             $i = 0;
 
@@ -824,7 +807,7 @@ class Mail_mimePart
 
         // Structured header (make sure addr-spec inside is not encoded)
         if (!empty($separator)) {
-            $parts = Mail_mimePart::_explodeQuotedString($separator, $value);
+            $parts = $this->_explodeQuotedString($separator, $value);
             $value = '';
 
             foreach ($parts as $part) {

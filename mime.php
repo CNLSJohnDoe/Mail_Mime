@@ -1,4 +1,5 @@
 <?php
+namespace cnlsjohndoe\mail_mime;
 /**
  * The Mail_Mime class is used to create MIME E-mail messages
  *
@@ -57,25 +58,6 @@
  *            and Sascha Schumann <sascha@schumann.cx>
  */
 
-
-/**
- * require PEAR
- *
- * This package depends on PEAR to raise errors.
- */
-
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR ."../../PEAR.php";
-
-/**
- * require Mail_mimePart
- *
- * Mail_mimePart contains the code required to
- * create all the different parts a mail can
- * consist of.
- */
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR .'mimePart.php';
-
-
 /**
  * The Mail_Mime class provides an OO interface to create MIME
  * enabled email messages. This way you can create emails that
@@ -93,7 +75,7 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR .'mimePart.php';
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/Mail_mime
  */
-class Mail_mime
+class mime
 {
     /**
      * Contains the plain text part of the email
@@ -184,7 +166,7 @@ class Mail_mime
 
         // Update build parameters
         if (!empty($params) && is_array($params)) {
-            while (list($key, $value) = each($params)) {
+            foreach($params as $key => $value) {
                 $this->_build_params[$key] = $value;
             }
         }
@@ -246,7 +228,7 @@ class Mail_mime
             }
         } else {
             $cont = $this->_file2str($data);
-            if (PEAR::isError($cont)) {
+            if (\PEAR::isError($cont)) {
                 return $cont;
             }
             if (!$append) {
@@ -287,7 +269,7 @@ class Mail_mime
             $this->_htmlbody = $data;
         } else {
             $cont = $this->_file2str($data);
-            if (PEAR::isError($cont)) {
+            if (\PEAR::isError($cont)) {
                 return $cont;
             }
             $this->_htmlbody = $cont;
@@ -337,7 +319,7 @@ class Mail_mime
                 $filedata = null;
                 $bodyfile = $file;
             } else {
-                if (PEAR::isError($filedata = $this->_file2str($file))) {
+                if (\PEAR::isError($filedata = $this->_file2str($file))) {
                     return $filedata;
                 }
             }
@@ -415,7 +397,7 @@ class Mail_mime
                 $filedata = null;
                 $bodyfile = $file;
             } else {
-                if (PEAR::isError($filedata = $this->_file2str($file))) {
+                if (\PEAR::isError($filedata = $this->_file2str($file))) {
                     return $filedata;
                 }
             }
@@ -428,7 +410,7 @@ class Mail_mime
 
         if (!strlen($filename)) {
             $msg = "The supplied filename for the attachment can't be empty";
-            $err = PEAR::raiseError($msg);
+            $err = \PEAR::raiseError($msg);
             return $err;
         }
         $filename = $this->_basename($filename);
@@ -463,25 +445,16 @@ class Mail_mime
     {
         // Check state of file and raise an error properly
         if (!file_exists($file_name)) {
-            $err = PEAR::raiseError('File not found: ' . $file_name);
+            $err = \PEAR::raiseError('File not found: ' . $file_name);
             return $err;
         }
         if (!is_file($file_name)) {
-            $err = PEAR::raiseError('Not a regular file: ' . $file_name);
+            $err = \PEAR::raiseError('Not a regular file: ' . $file_name);
             return $err;
         }
         if (!is_readable($file_name)) {
-            $err = PEAR::raiseError('File is not readable: ' . $file_name);
+            $err = \PEAR::raiseError('File is not readable: ' . $file_name);
             return $err;
-        }
-
-        // Temporarily reset magic_quotes_runtime and read file contents
-        if ($magic_quote_setting = get_magic_quotes_runtime()) {
-            @ini_set('magic_quotes_runtime', 0);
-        }
-        $cont = file_get_contents($file_name);
-        if ($magic_quote_setting) {
-            @ini_set('magic_quotes_runtime', $magic_quote_setting);
         }
 
         return $cont;
@@ -535,7 +508,7 @@ class Mail_mime
             $ret = $obj->addSubpart($this->_htmlbody, $params);
             return $ret;
         } else {
-            $ret = new Mail_mimePart($this->_htmlbody, $params);
+            $ret = new mimePart($this->_htmlbody, $params);
             return $ret;
         }
     }
@@ -707,7 +680,7 @@ class Mail_mime
 
         $body = $this->get($params);
 
-        if (PEAR::isError($body)) {
+        if (\PEAR::isError($body)) {
             return $body;
         }
 
@@ -751,32 +724,23 @@ class Mail_mime
     {
         // Check state of file and raise an error properly
         if (file_exists($filename) && !is_writable($filename)) {
-            $err = PEAR::raiseError('File is not writable: ' . $filename);
+            $err = \PEAR::raiseError('File is not writable: ' . $filename);
             return $err;
         }
 
-        // Temporarily reset magic_quotes_runtime and read file contents
-        if ($magic_quote_setting = get_magic_quotes_runtime()) {
-            @ini_set('magic_quotes_runtime', 0);
-        }
-
         if (!($fh = fopen($filename, 'ab'))) {
-            $err = PEAR::raiseError('Unable to open file: ' . $filename);
+            $err = \PEAR::raiseError('Unable to open file: ' . $filename);
             return $err;
         }
 
         // Write message headers into file (skipping Content-* headers)
         $head = $this->txtHeaders($headers, $overwrite, true);
         if (fwrite($fh, $head) === false) {
-            $err = PEAR::raiseError('Error writing to file: ' . $filename);
+            $err = \PEAR::raiseError('Error writing to file: ' . $filename);
             return $err;
         }
 
         fclose($fh);
-
-        if ($magic_quote_setting) {
-            @ini_set('magic_quotes_runtime', $magic_quote_setting);
-        }
 
         // Write the rest of the message into file
         $res = $this->get($params, $filename);
@@ -799,17 +763,12 @@ class Mail_mime
     {
         // Check state of file and raise an error properly
         if (file_exists($filename) && !is_writable($filename)) {
-            $err = PEAR::raiseError('File is not writable: ' . $filename);
+            $err = \PEAR::raiseError('File is not writable: ' . $filename);
             return $err;
         }
 
-        // Temporarily reset magic_quotes_runtime and read file contents
-        if ($magic_quote_setting = get_magic_quotes_runtime()) {
-            @ini_set('magic_quotes_runtime', 0);
-        }
-
         if (!($fh = fopen($filename, 'ab'))) {
-            $err = PEAR::raiseError('Unable to open file: ' . $filename);
+            $err = \PEAR::raiseError('Unable to open file: ' . $filename);
             return $err;
         }
 
@@ -836,7 +795,7 @@ class Mail_mime
     function &get($params = null, $filename = null, $skip_head = false)
     {
         if (isset($params)) {
-            while (list($key, $value) = each($params)) {
+            foreach($params as $key => $value) {
                 $this->_build_params[$key] = $value;
             }
         }
@@ -856,7 +815,7 @@ class Mail_mime
             }
         }
 
-        if (count($this->_html_images) && isset($this->_htmlbody)) {
+        if (!empty($this->_html_images) && isset($this->_htmlbody)) {
             foreach ($this->_html_images as $key => $value) {
                 $regex   = array();
                 $regex[] = '#(\s)((?i)src|background|href(?-i))\s*=\s*(["\']?)' .
@@ -877,8 +836,8 @@ class Mail_mime
         $this->_checkParams();
 
         $null        = null;
-        $attachments = count($this->_parts)                 ? true : false;
-        $html_images = count($this->_html_images)           ? true : false;
+        $attachments = !empty($this->_parts)                 ? true : false;
+        $html_images = !empty($this->_html_images)           ? true : false;
         $html        = strlen($this->_htmlbody)             ? true : false;
         $text        = (!$html && strlen($this->_txtbody))  ? true : false;
 
@@ -889,7 +848,7 @@ class Mail_mime
 
         case !$text && !$html && $attachments:
             $message =& $this->_addMixedPart();
-            for ($i = 0; $i < count($this->_parts); $i++) {
+            for ($i = 0; $i < !empty($this->_parts); $i++) {
                 $this->_addAttachmentPart($message, $this->_parts[$i]);
             }
             break;
@@ -897,7 +856,7 @@ class Mail_mime
         case $text && $attachments:
             $message =& $this->_addMixedPart();
             $this->_addTextPart($message, $this->_txtbody);
-            for ($i = 0; $i < count($this->_parts); $i++) {
+            for ($i = 0; $i < !empty($this->_parts); $i++) {
                 $this->_addAttachmentPart($message, $this->_parts[$i]);
             }
             break;
@@ -924,7 +883,7 @@ class Mail_mime
 
                 $ht =& $this->_addRelatedPart($message);
                 $this->_addHtmlPart($ht);
-                for ($i = 0; $i < count($this->_html_images); $i++) {
+                for ($i = 0; $i < !empty($this->_html_images); $i++) {
                     $this->_addHtmlImagePart($ht, $this->_html_images[$i]);
                 }
             } else {
@@ -933,7 +892,7 @@ class Mail_mime
                 //    * image...
                 $message =& $this->_addRelatedPart($null);
                 $this->_addHtmlPart($message);
-                for ($i = 0; $i < count($this->_html_images); $i++) {
+                for ($i = 0; $i < !empty($this->_html_images); $i++) {
                     $this->_addHtmlImagePart($message, $this->_html_images[$i]);
                 }
             }
@@ -952,7 +911,7 @@ class Mail_mime
             } else {
                 $this->_addHtmlPart($message);
             }
-            for ($i = 0; $i < count($this->_html_images); $i++) {
+            for ($i = 0; $i < !empty($this->_html_images); $i++) {
                 $this->_addHtmlImagePart($message, $this->_html_images[$i]);
             }
             */
@@ -967,7 +926,7 @@ class Mail_mime
             } else {
                 $this->_addHtmlPart($message);
             }
-            for ($i = 0; $i < count($this->_parts); $i++) {
+            for ($i = 0; $i < !empty($this->_parts); $i++) {
                 $this->_addAttachmentPart($message, $this->_parts[$i]);
             }
             break;
@@ -982,10 +941,10 @@ class Mail_mime
                 $rel =& $this->_addRelatedPart($message);
             }
             $this->_addHtmlPart($rel);
-            for ($i = 0; $i < count($this->_html_images); $i++) {
+            for ($i = 0; $i < !empty($this->_html_images); $i++) {
                 $this->_addHtmlImagePart($rel, $this->_html_images[$i]);
             }
-            for ($i = 0; $i < count($this->_parts); $i++) {
+            for ($i = 0; $i < !empty($this->_parts); $i++) {
                 $this->_addAttachmentPart($message, $this->_parts[$i]);
             }
             break;
@@ -1008,7 +967,7 @@ class Mail_mime
         if ($filename) {
             // Append mimePart message headers and body into file
             $headers = $message->encodeToFile($filename, $boundary, $skip_head);
-            if (PEAR::isError($headers)) {
+            if (\PEAR::isError($headers)) {
                 return $headers;
             }
             $this->_headers = array_merge($this->_headers, $headers);
@@ -1016,7 +975,7 @@ class Mail_mime
             return $ret;
         } else {
             $output = $message->encode($boundary, $skip_head);
-            if (PEAR::isError($output)) {
+            if (\PEAR::isError($output)) {
                 return $output;
             }
             $this->_headers = array_merge($this->_headers, $output['headers']);
@@ -1057,9 +1016,9 @@ class Mail_mime
         }
 
         if ($overwrite) {
-            $this->_headers = array_merge($this->_headers, $headers);
+            $this->_headers = array_merge((array) $this->_headers, (array) $headers);
         } else {
-            $this->_headers = array_merge($headers, $this->_headers);
+            $this->_headers = array_merge((array) $headers, (array) $this->_headers);
         }
 
         $headers = $this->_headers;
@@ -1277,7 +1236,7 @@ class Mail_mime
     function _encodeHeaders($input, $params = array())
     {
         $build_params = $this->_build_params;
-        while (list($key, $value) = each($params)) {
+        foreach ($params as $key => $value) {
             $build_params[$key] = $value;
         }
 
@@ -1314,7 +1273,8 @@ class Mail_mime
      */
     function encodeHeader($name, $value, $charset, $encoding)
     {
-        return Mail_mimePart::encodeHeader(
+        $mimePart = new mimePart();
+        return $mimePart->encodeHeader(
             $name, $value, $charset, $encoding, $this->_build_params['eol']
         );
     }
@@ -1345,8 +1305,8 @@ class Mail_mime
      */
     function _contentHeaders()
     {
-        $attachments = count($this->_parts)                 ? true : false;
-        $html_images = count($this->_html_images)           ? true : false;
+        $attachments = !empty($this->_parts)                 ? true : false;
+        $html_images = !empty($this->_html_images)           ? true : false;
         $html        = strlen($this->_htmlbody)             ? true : false;
         $text        = (!$html && strlen($this->_txtbody))  ? true : false;
         $headers     = array();

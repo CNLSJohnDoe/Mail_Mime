@@ -1,0 +1,8 @@
+{
+    "name": "cnlsjohndoe/mail_mime",
+    "autoload": {
+        "psr-4": { 
+            "cnlsjohndoe\\mail_mime\\" : ""
+        }
+    }
+}
